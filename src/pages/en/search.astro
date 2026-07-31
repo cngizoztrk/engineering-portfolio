@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPublished } from '../../lib/content';
+import { getPublished, canonicalSlug } from '../../lib/content';
 import { t } from '../../i18n';
 const dict = t('en');
 const items = [
   ...(await getPublished('research', 'en')).map((item) => ({ ...item, section: dict.search.sectionResearch })),
   ...(await getPublished('projects', 'en')).map((item) => ({ ...item, section: dict.search.sectionProject })),
   ...(await getPublished('notes', 'en')).map((item) => ({ ...item, section: dict.search.sectionNote })),
-].map((item) => ({ ...item, slug: item.slug.replace(/\.en$/, '') }));
+].map((item) => ({ ...item, slug: canonicalSlug(item) }));
 const uiText = { placeholder: dict.search.placeholder, noResults: dict.search.noResults, viewLink: dict.search.viewLink };
 ---
 <BaseLayout title={dict.search.metaTitle} description={dict.search.metaDescription} locale="en" alternatePath="/search/">

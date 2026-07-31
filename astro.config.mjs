@@ -5,8 +5,7 @@ import remarkGfm from 'remark-gfm';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // Kendi alan adın alınınca bu satırı değiştir (sitemap/robots/JSON-LD hepsi bunu kullanır):
-  site: 'https://engineering-portfolio.pages.dev',
+  site: 'https://mcengizozturk.pages.dev',
   integrations: [sitemap()],
   i18n: {
     locales: ['tr', 'en'],

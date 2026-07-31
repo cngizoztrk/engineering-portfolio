@@ -1,16 +1,19 @@
-# Sveltia CMS yapılandırması
-# Bkz. https://sveltiacms.app/en/docs — repo/branch ve kimlik doğrulama adımları
-# için proje köküne bırakılan FAZ-7 rapor mesajına bakabilirsin.
-
+# Sveltia CMS yapılandırması — https://sveltiacms.app/en/docs
+#
+# Kimlik doğrulama notu: Sveltia CMS'in GitHub OAuth PKCE akışı, bu belgenin
+# yazıldığı tarihte GitHub'ın istemci taraflı PKCE desteğini henüz yayınlamamış
+# olması nedeniyle KULLANILAMIYOR (bkz. sveltiacms.app/en/docs/backends/github).
+# Bu yüzden `auth_type` burada kasıtlı olarak boş bırakıldı; bu durumda Sveltia
+# CMS giriş ekranında varsayılan olarak "Sign In with Token" seçeneğini gösterir
+# — kullanıcı herhangi bir OAuth uygulaması kurmadan doğrudan bir GitHub Personal
+# Access Token yapıştırarak giriş yapar (bkz. ADMIN-KULLANIM.md).
 backend:
   name: github
-  # AŞAĞIYI DEĞİŞTİR: "kullanici-adin/repo-adin" formatında kendi GitHub reponu yaz.
-  # Örnek: mcengizozturk/engineering-portfolio
-  repo: KULLANICI_ADI/REPO_ADI
+  repo: cngizoztrk/engineering-portfolio
   branch: main
 
-# astro.config.mjs içindeki `site` değeriyle aynı tut (gerçek alan adını alınca burayı da güncelle).
-site_url: https://engineering-portfolio.pages.dev
+site_url: https://mcengizozturk.pages.dev
+display_url: https://mcengizozturk.pages.dev
 
 # Medya yükleme klasörü: yüklenen görseller public/images/uploads/ altına gider,
 # sitede /images/uploads/... yolundan servis edilir.

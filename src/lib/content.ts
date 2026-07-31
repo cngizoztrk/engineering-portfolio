@@ -11,10 +11,12 @@ export async function getPublished<C extends PublishableCollection>(
   return all.filter((entry) => (entry.data.lang ?? 'tr') === locale);
 }
 
-// Dosya adı `slug.en.md` biçimindeyse üretilen slug `slug.en` olur; TR karşılığıyla
-// eşleştirmek ve temiz bir URL üretmek için bu sonek temizlenir.
-function baseSlug(slug: string): string {
-  return slug.replace(/\.en$/, '');
+// Astro'nun varsayılan slug üretici (github-slugger) dosya kimliğindeki noktaları
+// siler: `slug.en.md` dosyasının `entry.slug` değeri `slug.en` değil `slugen` olur.
+// Bu yüzden sonek temizliğini `entry.slug` üzerinde değil, noktaların korunduğu
+// `entry.id` (ör. `slug.en.md`) üzerinde yapıp temiz bir taban slug üretiyoruz.
+export function canonicalSlug(entry: CollectionEntry<PublishableCollection>): string {
+  return entry.id.replace(/\.md$/, '').replace(/\.en$/, '');
 }
 
 export interface LocalizedEntry<C extends PublishableCollection> {
@@ -32,8 +34,8 @@ export async function getLocalizedEntries<C extends PublishableCollection>(
   const enItems = await getPublished(collection, 'en');
 
   return trItems.map((trItem) => {
-    const key = trItem.data.translationKey ?? trItem.slug;
-    const enItem = enItems.find((item) => (item.data.translationKey ?? baseSlug(item.slug)) === key);
+    const key = trItem.data.translationKey ?? canonicalSlug(trItem);
+    const enItem = enItems.find((item) => (item.data.translationKey ?? canonicalSlug(item)) === key);
     return { slug: trItem.slug, tr: trItem, en: enItem };
   });
 }

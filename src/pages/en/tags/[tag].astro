@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getPublished } from '../../../lib/content';
+import { getPublished, canonicalSlug } from '../../../lib/content';
 import { t } from '../../../i18n';
 
 const dict = t('en');
@@ -20,7 +20,7 @@ const allItems = [
   ...(await getPublished('research', 'en')).map((item) => ({ ...item, section: dict.search.sectionResearch })),
   ...(await getPublished('projects', 'en')).map((item) => ({ ...item, section: dict.search.sectionProject })),
   ...(await getPublished('notes', 'en')).map((item) => ({ ...item, section: dict.search.sectionNote })),
-].map((item) => ({ ...item, slug: item.slug.replace(/\.en$/, '') }));
+].map((item) => ({ ...item, slug: canonicalSlug(item) }));
 const items = allItems.filter((item) => item.data.tags.includes(tag as string));
 ---
 <BaseLayout title={`${dict.tags.titlePrefix} ${tag}`} description={`${dict.tags.metaDescriptionPrefix} ${tag}`} locale="en" alternatePath="/">

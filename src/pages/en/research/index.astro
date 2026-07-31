@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import FilterBar from '../../../components/FilterBar.astro';
-import { getPublished } from '../../../lib/content';
+import { getPublished, canonicalSlug } from '../../../lib/content';
 import { t } from '../../../i18n';
 const dict = t('en');
 const items = await getPublished('research', 'en');
@@ -20,7 +20,7 @@ const tags = [...new Set(items.flatMap((item) => item.data.tags))].sort();
         data-tags={item.data.tags.join(',')}
       >
         <div class="entry-row-head">
-          <a class="entry-row-title" href={`/en/research/${item.slug.replace(/\.en$/, '')}`}>{item.data.title}</a>
+          <a class="entry-row-title" href={`/en/research/${canonicalSlug(item)}`}>{item.data.title}</a>
           <span class="entry-row-date">{item.data.updated ?? item.data.date}</span>
         </div>
         <p class="entry-row-summary">{item.data.summary}</p>

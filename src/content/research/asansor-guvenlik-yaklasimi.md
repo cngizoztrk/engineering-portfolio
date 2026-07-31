@@ -2,7 +2,7 @@
 title: Asansör Güvenlik ve Yük Taşıma Sistemleri Araştırması
 summary: Asansör ve yürüyen merdivenlerde güvenlik temelini oluşturan düzenlemeler, yük akışı ve tasarım düşünceleri üzerine teknik not.
 category: Asansör mühendisliği
-tags: [asansor, güvenlik, en81, standard]
+tags: [asansör, güvenlik, en81, standard]
 lang: tr
 translationKey: asansor-guvenlik-yaklasimi
 status: ongoing

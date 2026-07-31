@@ -5,7 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PdfLink from '../../components/PdfLink.astro';
 import { getCollection } from 'astro:content';
-import { getPublished } from '../../lib/content';
+import { getPublished, canonicalSlug } from '../../lib/content';
 import { siteConfig } from '../../config';
 import { t } from '../../i18n';
 
@@ -91,7 +91,7 @@ const personLd = {
           <div class="tags">
             {item.data.tools.map((tool) => <span class="tag">{tool}</span>)}
           </div>
-          <p><a href={`/en/projects/${item.slug.replace(/\.en$/, '')}`}>{dict.home.viewDetails}</a></p>
+          <p><a href={`/en/projects/${canonicalSlug(item)}`}>{dict.home.viewDetails}</a></p>
         </article>
       ))}
     </div>
