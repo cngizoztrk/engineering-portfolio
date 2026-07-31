@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getPublished } from '../../../lib/content';
+import { t } from '../../../i18n';
+const dict = t('en');
+const items = await getPublished('notes', 'en');
+---
+<BaseLayout title={dict.notes.indexMetaTitle} description={dict.notes.indexMetaDescription} locale="en" alternatePath="/notes/">
+  <h1 class="section-title">{dict.notes.indexTitle}</h1>
+  <ul class="entry-list">
+    {items.map((item) => (
+      <li class="entry-row">
+        <div class="entry-row-head">
+          <a class="entry-row-title" href={`/en/notes/${item.slug.replace(/\.en$/, '')}`}>{item.data.title}</a>
+          <span class="entry-row-date">{item.data.updated ?? item.data.date}</span>
+        </div>
+        <p class="entry-row-summary">{item.data.summary}</p>
+        <div class="tags">
+          {item.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

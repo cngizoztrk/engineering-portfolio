@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import { getPublished } from '../../lib/content';
+import { t } from '../../i18n';
+const dict = t('tr');
+const items = await getPublished('research', 'tr');
+const categories = [...new Set(items.map((item) => item.data.category).filter((v): v is string => Boolean(v)))].sort();
+const tags = [...new Set(items.flatMap((item) => item.data.tags))].sort();
+---
+<BaseLayout title={dict.research.indexMetaTitle} description={dict.research.indexMetaDescription} locale="tr" alternatePath="/en/research/">
+  <h1 class="section-title">{dict.research.indexTitle}</h1>
+  <FilterBar categories={categories} tags={tags} labels={dict.filter} />
+  <ul class="entry-list" data-filter-grid>
+    {items.map((item) => (
+      <li
+        class="entry-row"
+        data-card
+        data-category={item.data.category || ''}
+        data-tags={item.data.tags.join(',')}
+      >
+        <div class="entry-row-head">
+          <a class="entry-row-title" href={`/research/${item.slug}`}>{item.data.title}</a>
+          <span class="entry-row-date">{item.data.updated ?? item.data.date}</span>
+        </div>
+        <p class="entry-row-summary">{item.data.summary}</p>
+        <div class="tags">
+          {item.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

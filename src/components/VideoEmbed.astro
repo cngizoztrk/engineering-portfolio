@@ -1,0 +1,61 @@
+---
+interface Props {
+  url?: string;
+  title: string;
+  label?: string;
+}
+const { url, title, label = 'Video' } = Astro.props;
+
+function toEmbedUrl(raw: string): string | null {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^www\./, '').replace(/^m\./, '');
+
+  if (host === 'youtu.be') {
+    const id = u.pathname.slice(1);
+    return id ? `https://www.youtube.com/embed/${id}` : null;
+  }
+  if (host === 'youtube.com') {
+    if (u.pathname === '/watch') {
+      const id = u.searchParams.get('v');
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (u.pathname.startsWith('/embed/')) return raw;
+    if (u.pathname.startsWith('/shorts/')) {
+      const id = u.pathname.split('/')[2];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+  }
+  if (host === 'vimeo.com') {
+    const id = u.pathname.split('/').filter(Boolean)[0];
+    return id && /^\d+$/.test(id) ? `https://player.vimeo.com/video/${id}` : null;
+  }
+  if (host === 'player.vimeo.com') return raw;
+
+  return null;
+}
+
+const embedUrl = url ? toEmbedUrl(url) : null;
+---
+{url && (
+  <section class="video-embed">
+    <h2 class="section-title">{label}</h2>
+    {embedUrl ? (
+      <div class="video-frame">
+        <iframe
+          src={embedUrl}
+          title={title}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    ) : (
+      <p><a href={url} target="_blank" rel="noopener noreferrer">{url}</a></p>
+    )}
+  </section>
+)}

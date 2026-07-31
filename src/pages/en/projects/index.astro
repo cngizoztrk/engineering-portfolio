@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FilterBar from '../../../components/FilterBar.astro';
+import { getPublished } from '../../../lib/content';
+import { t } from '../../../i18n';
+import type { CollectionEntry } from 'astro:content';
+
+const dict = t('en');
+const items = await getPublished('projects', 'en');
+const categories = [...new Set(items.map((item) => item.data.category).filter((v): v is string => Boolean(v)))].sort();
+const tags = [...new Set(items.flatMap((item) => item.data.tags))].sort();
+const tools = [...new Set(items.flatMap((item) => item.data.tools))].sort();
+
+const groups = new Map<string, CollectionEntry<'projects'>[]>();
+for (const item of items) {
+  const key = item.data.category || dict.projects.uncategorized;
+  const group = groups.get(key) ?? [];
+  group.push(item);
+  groups.set(key, group);
+}
+const sortedGroups = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b, 'en'));
+---
+<BaseLayout title={dict.projects.indexMetaTitle} description={dict.projects.indexMetaDescription} locale="en" alternatePath="/projects/">
+  <h1 class="section-title">{dict.projects.indexTitle}</h1>
+  <FilterBar categories={categories} tags={tags} tools={tools} labels={dict.filter} />
+  <div data-filter-grid>
+    {sortedGroups.map(([category, groupItems]) => (
+      <section class="project-group" data-category-section>
+        <h2 class="project-group-title">{category}</h2>
+        <div class="grid">
+          {groupItems.map((item) => (
+            <article
+              class="card"
+              data-card
+              data-category={item.data.category || ''}
+              data-tags={item.data.tags.join(',')}
+              data-tools={item.data.tools.join(',')}
+            >
+              <div class="label">{dict.projects.label}</div>
+              <h3>{item.data.title}</h3>
+              <p>{item.data.summary}</p>
+              <div class="tags">
+                {item.data.tools.map((tool) => <span class="tag">{tool}</span>)}
+              </div>
+              <p><a href={`/en/projects/${item.slug.replace(/\.en$/, '')}`}>{dict.projects.viewTemplate}</a></p>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

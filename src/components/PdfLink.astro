@@ -1,0 +1,15 @@
+---
+interface Props {
+  href: string;
+  viewLabel: string;
+  downloadLabel: string;
+  class?: string;
+  fileName?: string;
+}
+
+const { href, viewLabel, downloadLabel, class: className = 'primary-btn', fileName } = Astro.props;
+---
+<span class="pdf-link-group">
+  <a class={className} href={href} target="_blank" rel="noopener">{viewLabel}</a>
+  <a class="pdf-download-link" href={href} download={fileName ?? true}>{downloadLabel}</a>
+</span>

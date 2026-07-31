@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Changelog from '../../../components/Changelog.astro';
+import Gallery from '../../../components/Gallery.astro';
+import PdfLink from '../../../components/PdfLink.astro';
+import VideoEmbed from '../../../components/VideoEmbed.astro';
+import { render } from 'astro:content';
+import { getLocalizedEntries } from '../../../lib/content';
+import { t } from '../../../i18n';
+import { siteConfig } from '../../../config';
+
+const dict = t('en');
+
+export async function getStaticPaths() {
+  const entries = await getLocalizedEntries('projects');
+  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const item = entry.en;
+const Content = item ? (await render(item)).Content : null;
+
+const techArticleLd = item ? {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: item.data.title,
+  description: item.data.summary,
+  ...(item.data.updated ? { dateModified: item.data.updated } : {}),
+  keywords: item.data.tags.join(', '),
+  author: { '@type': 'Person', name: siteConfig.name },
+  mainEntityOfPage: new URL(`/en/projects/${entry.slug}`, Astro.site).toString()
+} : undefined;
+---
+{item && Content ? (
+  <BaseLayout title={item.data.title} description={item.data.summary} locale="en" alternatePath={`/projects/${entry.slug}`} structuredData={techArticleLd}>
+    <article class="panel">
+      <div class="label">{dict.projects.detailLabel}</div>
+      <h1>{item.data.title}</h1>
+      <div class="meta">
+        <span>{item.data.domain}</span>
+        <span>{item.data.tools.join(', ')}</span>
+        {item.data.version && <span>v{item.data.version}</span>}
+        {item.data.updated && <span>{dict.projects.updatedLabel} {item.data.updated}</span>}
+      </div>
+      <div class="tags">
+        {item.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+      {(item.data.github || item.data.pdf) && (
+        <p class="resource-links">
+          {item.data.github && (
+            <a class="primary-btn" href={item.data.github} target="_blank" rel="noopener noreferrer">{dict.projects.githubLink}</a>
+          )}
+          {item.data.pdf && (
+            <PdfLink href={item.data.pdf} viewLabel={dict.projects.pdfView} downloadLabel={dict.pdf.downloadLabel} />
+          )}
+        </p>
+      )}
+      <Content />
+    </article>
+    <VideoEmbed url={item.data.video} title={item.data.title} />
+    <Gallery images={item.data.images} title={item.data.title} labels={dict.gallery} />
+    <Changelog changelog={item.data.changelog} labels={dict.changelog} />
+  </BaseLayout>
+) : (
+  <BaseLayout title={entry.tr.data.title} description={entry.tr.data.summary} locale="en" alternatePath={`/projects/${entry.slug}`}>
+    <article class="panel">
+      <div class="label">{dict.projects.detailLabel}</div>
+      <h1>{entry.tr.data.title}</h1>
+      <p>{dict.untranslated.message}</p>
+      <p><a href={`/projects/${entry.slug}`}>{dict.untranslated.backLink}</a></p>
+    </article>
+  </BaseLayout>
+)}

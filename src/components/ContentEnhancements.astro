@@ -1,0 +1,69 @@
+---
+interface Props {
+  labels?: { copy: string; copied: string; failed: string };
+}
+const { labels = { copy: 'Copy', copied: 'Copied', failed: 'Copy failed' } } = Astro.props;
+---
+<script type="application/json" id="content-enhancements-labels" set:html={JSON.stringify(labels)} is:inline />
+<script>
+  function getLabels() {
+    const raw = document.getElementById('content-enhancements-labels')?.textContent;
+    const fallback = { copy: 'Copy', copied: 'Copied', failed: 'Copy failed' };
+    try {
+      return raw ? { ...fallback, ...JSON.parse(raw) } : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function setupCodeCopyButtons() {
+    const labels = getLabels();
+    document.querySelectorAll('pre.astro-code').forEach((pre) => {
+      if (pre.parentElement?.classList.contains('code-block')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      pre.replaceWith(wrapper);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy-btn';
+      button.textContent = labels.copy;
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(pre.textContent ?? '');
+          button.textContent = labels.copied;
+        } catch {
+          button.textContent = labels.failed;
+        }
+        setTimeout(() => {
+          button.textContent = labels.copy;
+        }, 1500);
+      });
+      wrapper.appendChild(button);
+    });
+  }
+
+  async function setupMermaid() {
+    const blocks = document.querySelectorAll('pre[data-language="mermaid"]');
+    if (blocks.length === 0) return;
+
+    const { default: mermaid } = await import('mermaid');
+    mermaid.initialize({ startOnLoad: false });
+
+    blocks.forEach((pre, index) => {
+      const code = pre.textContent ?? '';
+      const container = document.createElement('div');
+      container.className = 'mermaid';
+      container.id = `mermaid-diagram-${index}`;
+      container.textContent = code;
+      pre.replaceWith(container);
+    });
+
+    await mermaid.run({ querySelector: '.mermaid' });
+  }
+
+  setupCodeCopyButtons();
+  setupMermaid();
+</script>

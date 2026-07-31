@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublished } from '../../lib/content';
+import { t } from '../../i18n';
+
+const dict = t('tr');
+
+export async function getStaticPaths() {
+  const tags = new Set<string>();
+  for (const collection of ['research', 'projects', 'notes'] as const) {
+    const items = await getPublished(collection, 'tr');
+    items.forEach((item) => item.data.tags.forEach((tag) => tags.add(tag)));
+  }
+
+  return [...tags].map((tag) => ({ params: { tag } }));
+}
+
+const { tag } = Astro.params;
+const allItems = [
+  ...(await getPublished('research', 'tr')).map((item) => ({ ...item, section: dict.search.sectionResearch })),
+  ...(await getPublished('projects', 'tr')).map((item) => ({ ...item, section: dict.search.sectionProject })),
+  ...(await getPublished('notes', 'tr')).map((item) => ({ ...item, section: dict.search.sectionNote })),
+];
+const items = allItems.filter((item) => item.data.tags.includes(tag as string));
+---
+<BaseLayout title={`${dict.tags.titlePrefix} ${tag}`} description={`${dict.tags.metaDescriptionPrefix} ${tag}`} locale="tr" alternatePath="/en/">
+  <h1 class="section-title">{dict.tags.titlePrefix} {tag}</h1>
+  <div class="grid">
+    {items.map((item) => (
+      <article class="card">
+        <div class="label">{item.section}</div>
+        <h3>{item.data.title}</h3>
+        <p>{item.data.summary}</p>
+        <p><a href={`/${item.collection}/${item.slug}`}>{dict.tags.openLink}</a></p>
+      </article>
+    ))}
+  </div>
+</BaseLayout>

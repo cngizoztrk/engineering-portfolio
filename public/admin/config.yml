@@ -1,0 +1,245 @@
+# Sveltia CMS yapılandırması
+# Bkz. https://sveltiacms.app/en/docs — repo/branch ve kimlik doğrulama adımları
+# için proje köküne bırakılan FAZ-7 rapor mesajına bakabilirsin.
+
+backend:
+  name: github
+  # AŞAĞIYI DEĞİŞTİR: "kullanici-adin/repo-adin" formatında kendi GitHub reponu yaz.
+  # Örnek: mcengizozturk/engineering-portfolio
+  repo: KULLANICI_ADI/REPO_ADI
+  branch: main
+
+# astro.config.mjs içindeki `site` değeriyle aynı tut (gerçek alan adını alınca burayı da güncelle).
+site_url: https://engineering-portfolio.pages.dev
+
+# Medya yükleme klasörü: yüklenen görseller public/images/uploads/ altına gider,
+# sitede /images/uploads/... yolundan servis edilir.
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+# TR/EN içerik dosyaları: varsayılan dil (tr) için sonek yok (ör. kapi-analizi.md),
+# diğer dil için dosya adına .en eklenir (ör. kapi-analizi.en.md). Bu, sitenin
+# mevcut dosya adlandırma biçimiyle birebir aynıdır.
+i18n:
+  structure: multiple_files
+  locales: [tr, en]
+  default_locale: tr
+  omit_default_locale_from_file_path: true
+
+collections:
+  - name: research
+    label: "Araştırmalar"
+    label_singular: "Araştırma"
+    folder: "src/content/research"
+    create: true
+    delete: true
+    i18n: true
+    slug: "{{fields.slug}}"
+    fields:
+      - label: "Dosya adı (slug)"
+        name: slug
+        widget: string
+        hint: "Küçük harf, rakam ve tire kullan (örn. yeni-arastirma-konusu). Kaydettikten sonra değiştirme."
+        pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Sadece küçük harf, rakam ve tire kullanılabilir."]
+      - {label: "Başlık", name: title, widget: string, i18n: true}
+      - {label: "Özet", name: summary, widget: text, i18n: true}
+      - {label: "Konu", name: topic, widget: string, i18n: true}
+      - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
+      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true, hint: "Her satıra bir etiket."}
+      - {label: "Durum", name: status, widget: select, options: [ongoing, completed], default: ongoing, i18n: duplicate}
+      - {label: "Kaynak sayısı", name: sourceCount, widget: number, value_type: int, default: 0, required: false, i18n: duplicate}
+      - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, i18n: duplicate}
+      - {label: "Güncelleme tarihi", name: updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false, i18n: duplicate}
+      - {label: "Sürüm", name: version, widget: string, required: false, i18n: duplicate}
+      - label: "Teknik rapor (PDF)"
+        name: pdf
+        widget: file
+        required: false
+        i18n: duplicate
+        media_folder: "/public/pdf"
+        public_folder: "/pdf"
+      - label: "Video (YouTube/Vimeo bağlantısı)"
+        name: video
+        widget: string
+        required: false
+        i18n: duplicate
+        hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
+        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
+      - label: "Değişiklik geçmişi"
+        name: changelog
+        widget: list
+        required: false
+        i18n: true
+        fields:
+          - {label: "Sürüm", name: version, widget: string}
+          - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
+          - {label: "Not", name: note, widget: string}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - label: "Dil"
+        name: lang
+        widget: select
+        options: [tr, en]
+        default: tr
+        i18n: true
+        hint: "ÖNEMLİ: TR sekmesinde 'tr', EN sekmesinde mutlaka 'en' seç. Yanlış bırakılırsa içerik ilgili dil sayfasında görünmez."
+      - label: "Çeviri anahtarı"
+        name: translationKey
+        widget: string
+        required: false
+        hint: "Genelde gerekmez; slug alanı TR/EN dosyalarını zaten eşleştirir."
+      - {label: "İçerik", name: body, widget: markdown, i18n: true}
+
+  - name: projects
+    label: "Projeler"
+    label_singular: "Proje"
+    folder: "src/content/projects"
+    create: true
+    delete: true
+    i18n: true
+    slug: "{{fields.slug}}"
+    fields:
+      - label: "Dosya adı (slug)"
+        name: slug
+        widget: string
+        hint: "Küçük harf, rakam ve tire kullan (örn. yeni-proje-adi). Kaydettikten sonra değiştirme."
+        pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Sadece küçük harf, rakam ve tire kullanılabilir."]
+      - {label: "Başlık", name: title, widget: string, i18n: true}
+      - {label: "Özet", name: summary, widget: text, i18n: true}
+      - {label: "Alan (domain)", name: domain, widget: string, i18n: true, hint: "Örn. Katı mekanik / mekanizma tasarımı"}
+      - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
+      - {label: "Araçlar", name: tools, widget: list, required: false, i18n: true, hint: "Örn. ANSYS, MATLAB, SolidWorks — her satıra bir araç."}
+      - {label: "Standartlar", name: standards, widget: list, required: false, i18n: true, hint: "Örn. EN 81-20, ISO 13855"}
+      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true}
+      - label: "GitHub bağlantısı"
+        name: github
+        widget: string
+        required: false
+        i18n: duplicate
+        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
+      - label: "Galeri görselleri"
+        name: images
+        widget: list
+        required: false
+        i18n: duplicate
+        field: {label: "Görsel", name: image, widget: image}
+      - {label: "Öne çıkan proje", name: featured, widget: boolean, default: false, i18n: duplicate}
+      - label: "Teknik rapor (PDF)"
+        name: pdf
+        widget: file
+        required: false
+        i18n: duplicate
+        media_folder: "/public/pdf"
+        public_folder: "/pdf"
+      - label: "Video (YouTube/Vimeo bağlantısı)"
+        name: video
+        widget: string
+        required: false
+        i18n: duplicate
+        hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
+        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
+      - label: "Değişiklik geçmişi"
+        name: changelog
+        widget: list
+        required: false
+        i18n: true
+        fields:
+          - {label: "Sürüm", name: version, widget: string}
+          - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
+          - {label: "Not", name: note, widget: string}
+      - {label: "Sürüm", name: version, widget: string, required: false, i18n: duplicate}
+      - {label: "Güncelleme tarihi", name: updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false, i18n: duplicate}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - label: "Dil"
+        name: lang
+        widget: select
+        options: [tr, en]
+        default: tr
+        i18n: true
+        hint: "ÖNEMLİ: TR sekmesinde 'tr', EN sekmesinde mutlaka 'en' seç. Yanlış bırakılırsa içerik ilgili dil sayfasında görünmez."
+      - label: "Çeviri anahtarı"
+        name: translationKey
+        widget: string
+        required: false
+        hint: "Genelde gerekmez; slug alanı TR/EN dosyalarını zaten eşleştirir."
+      - {label: "İçerik", name: body, widget: markdown, i18n: true}
+
+  - name: notes
+    label: "Notlar"
+    label_singular: "Not"
+    folder: "src/content/notes"
+    create: true
+    delete: true
+    i18n: true
+    slug: "{{fields.slug}}"
+    fields:
+      - label: "Dosya adı (slug)"
+        name: slug
+        widget: string
+        hint: "Küçük harf, rakam ve tire kullan (örn. yeni-not-konusu). Kaydettikten sonra değiştirme."
+        pattern: ["^[a-z0-9]+(-[a-z0-9]+)*$", "Sadece küçük harf, rakam ve tire kullanılabilir."]
+      - {label: "Başlık", name: title, widget: string, i18n: true}
+      - {label: "Özet", name: summary, widget: text, i18n: true}
+      - {label: "Konu başlığı", name: subject, widget: string, i18n: true, hint: "Örn. Makine elemanları"}
+      - {label: "Kaynak", name: source, widget: string, required: false, i18n: true, hint: "Örn. Mühendislik ders notları"}
+      - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
+      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true}
+      - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, i18n: duplicate}
+      - {label: "Güncelleme tarihi", name: updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false, i18n: duplicate}
+      - {label: "Sürüm", name: version, widget: string, required: false, i18n: duplicate}
+      - label: "PDF eki"
+        name: pdf
+        widget: file
+        required: false
+        i18n: duplicate
+        media_folder: "/public/pdf"
+        public_folder: "/pdf"
+      - label: "Video (YouTube/Vimeo bağlantısı)"
+        name: video
+        widget: string
+        required: false
+        i18n: duplicate
+        hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
+        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
+      - label: "Değişiklik geçmişi"
+        name: changelog
+        widget: list
+        required: false
+        i18n: true
+        fields:
+          - {label: "Sürüm", name: version, widget: string}
+          - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
+          - {label: "Not", name: note, widget: string}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - label: "Dil"
+        name: lang
+        widget: select
+        options: [tr, en]
+        default: tr
+        i18n: true
+        hint: "ÖNEMLİ: TR sekmesinde 'tr', EN sekmesinde mutlaka 'en' seç. Yanlış bırakılırsa içerik ilgili dil sayfasında görünmez."
+      - label: "Çeviri anahtarı"
+        name: translationKey
+        widget: string
+        required: false
+        hint: "Genelde gerekmez; slug alanı TR/EN dosyalarını zaten eşleştirir."
+      - {label: "İçerik", name: body, widget: markdown, i18n: true}
+
+  - name: about
+    label: "Hakkımda Sayfası"
+    editor: { preview: false }
+    files:
+      - name: about
+        label: "Hakkımda"
+        file: "src/content/about/index.md"
+        i18n: true
+        fields:
+          - {label: "Başlık", name: title, widget: string, default: "Hakkımda", i18n: true}
+          - label: "Dil"
+            name: lang
+            widget: select
+            options: [tr, en]
+            default: tr
+            i18n: true
+            hint: "ÖNEMLİ: TR sekmesinde 'tr', EN sekmesinde mutlaka 'en' seç."
+          - {label: "Çeviri anahtarı", name: translationKey, widget: string, required: false, default: "index"}
+          - {label: "İçerik", name: body, widget: markdown, i18n: true}

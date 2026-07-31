@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Engineering portfolio preview">
+  <rect width="1200" height="630" fill="#f6f8fb"/>
+  <rect x="40" y="40" width="1120" height="550" fill="#ffffff" stroke="#c9d3e1" stroke-width="2"/>
+  <rect x="80" y="90" width="240" height="18" fill="#2b4f8a"/>
+  <text x="80" y="180" font-family="Arial, Helvetica, sans-serif" font-size="56" fill="#17273a" font-weight="700">Engineering Portfolio</text>
+  <text x="80" y="235" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#55657f">Research • Projects • Notes</text>
+  <rect x="80" y="285" width="300" height="150" fill="#eef2f8" stroke="#c9d3e1"/>
+  <rect x="420" y="285" width="300" height="150" fill="#eef2f8" stroke="#c9d3e1"/>
+  <rect x="760" y="285" width="300" height="150" fill="#eef2f8" stroke="#c9d3e1"/>
+  <text x="112" y="344" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#2b4f8a">FEA</text>
+  <text x="452" y="344" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#2b4f8a">CAD</text>
+  <text x="792" y="344" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#2b4f8a">CFD</text>
+</svg>

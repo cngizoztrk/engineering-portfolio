@@ -1,0 +1,96 @@
+---
+interface Props {
+  categories: string[];
+  tags: string[];
+  tools?: string[];
+  labels?: { category: string; tag: string; tool: string; all: string; reset: string; empty: string };
+}
+const {
+  categories,
+  tags,
+  tools,
+  labels = { category: 'Kategori', tag: 'Etiket', tool: 'Araç', all: 'Tümü', reset: 'Filtreleri temizle', empty: 'Bu filtrelerle eşleşen içerik yok.' }
+} = Astro.props;
+---
+<div class="filter-bar" data-filter-bar>
+  <label class="filter-field">
+    <span>{labels.category}</span>
+    <select data-filter="category">
+      <option value="">{labels.all}</option>
+      {categories.map((category) => <option value={category}>{category}</option>)}
+    </select>
+  </label>
+  <label class="filter-field">
+    <span>{labels.tag}</span>
+    <select data-filter="tag">
+      <option value="">{labels.all}</option>
+      {tags.map((tag) => <option value={tag}>{tag}</option>)}
+    </select>
+  </label>
+  {tools && tools.length > 0 && (
+    <label class="filter-field">
+      <span>{labels.tool}</span>
+      <select data-filter="tool">
+        <option value="">{labels.all}</option>
+        {tools.map((tool) => <option value={tool}>{tool}</option>)}
+      </select>
+    </label>
+  )}
+  <button type="button" class="filter-reset" data-filter-reset>{labels.reset}</button>
+</div>
+<p class="filter-empty" data-filter-empty hidden>{labels.empty}</p>
+
+<script>
+  function setupFilterBar() {
+    const bar = document.querySelector('[data-filter-bar]');
+    const grid = document.querySelector('[data-filter-grid]');
+    if (!bar || !grid) return;
+
+    const cards = Array.from(grid.querySelectorAll('[data-card]'));
+    const sections = Array.from(grid.querySelectorAll('[data-category-section]'));
+    const selects = Array.from(bar.querySelectorAll('select[data-filter]'));
+    const emptyMsg = document.querySelector('[data-filter-empty]');
+    const resetBtn = bar.querySelector('[data-filter-reset]');
+
+    function apply() {
+      const active: Record<string, string> = {};
+      selects.forEach((select) => {
+        const el = select as HTMLSelectElement;
+        if (el.value) active[el.dataset.filter as string] = el.value;
+      });
+
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const el = card as HTMLElement;
+        let match = true;
+        if (active.category && el.dataset.category !== active.category) match = false;
+        if (active.tag) {
+          const cardTags = (el.dataset.tags || '').split(',').filter(Boolean);
+          if (!cardTags.includes(active.tag)) match = false;
+        }
+        if (active.tool) {
+          const cardTools = (el.dataset.tools || '').split(',').filter(Boolean);
+          if (!cardTools.includes(active.tool)) match = false;
+        }
+        el.hidden = !match;
+        if (match) visibleCount++;
+      });
+
+      sections.forEach((section) => {
+        const sectionCards = Array.from(section.querySelectorAll('[data-card]')) as HTMLElement[];
+        const anyVisible = sectionCards.some((card) => !card.hidden);
+        (section as HTMLElement).hidden = sectionCards.length > 0 && !anyVisible;
+      });
+
+      if (emptyMsg) (emptyMsg as HTMLElement).hidden = visibleCount !== 0;
+    }
+
+    selects.forEach((select) => select.addEventListener('change', apply));
+    resetBtn?.addEventListener('click', () => {
+      selects.forEach((select) => ((select as HTMLSelectElement).value = ''));
+      apply();
+    });
+  }
+
+  setupFilterBar();
+</script>

@@ -1,0 +1,56 @@
+---
+interface Props {
+  images?: string[];
+  title: string;
+  labels?: { title: string; close: string; altSuffix: string };
+}
+const {
+  images,
+  title,
+  labels = { title: 'Görsel galeri', close: 'Kapat', altSuffix: 'görsel' }
+} = Astro.props;
+---
+{images && images.length > 0 && (
+  <section class="gallery">
+    <h2 class="section-title">{labels.title}</h2>
+    <div class="gallery-grid">
+      {images.map((src, index) => (
+        <button type="button" class="gallery-thumb" data-gallery-open data-src={src}>
+          <img src={src} alt={`${title} — ${labels.altSuffix} ${index + 1}`} loading="lazy" />
+        </button>
+      ))}
+    </div>
+    <dialog class="gallery-dialog" data-gallery-dialog>
+      <button type="button" class="gallery-close" data-gallery-close aria-label={labels.close}>✕</button>
+      <img data-gallery-image src="" alt="" />
+    </dialog>
+  </section>
+)}
+
+<script>
+  function setupGallery() {
+    document.querySelectorAll<HTMLButtonElement>('[data-gallery-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const dialog = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
+        const img = dialog?.querySelector<HTMLImageElement>('[data-gallery-image]');
+        if (!dialog || !img) return;
+        const thumbImg = btn.querySelector('img');
+        img.src = btn.dataset.src ?? '';
+        img.alt = thumbImg?.alt ?? '';
+        dialog.showModal();
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-gallery-close]').forEach((btn) => {
+      btn.addEventListener('click', () => btn.closest('dialog')?.close());
+    });
+
+    document.querySelectorAll<HTMLDialogElement>('[data-gallery-dialog]').forEach((dialog) => {
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    });
+  }
+
+  setupGallery();
+</script>

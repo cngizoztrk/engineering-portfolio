@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Changelog from '../../../components/Changelog.astro';
+import VideoEmbed from '../../../components/VideoEmbed.astro';
+import { render } from 'astro:content';
+import { getLocalizedEntries } from '../../../lib/content';
+import { t } from '../../../i18n';
+import { siteConfig } from '../../../config';
+
+const dict = t('en');
+
+export async function getStaticPaths() {
+  const entries = await getLocalizedEntries('notes');
+  return entries.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const item = entry.en;
+const Content = item ? (await render(item)).Content : null;
+
+const techArticleLd = item ? {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: item.data.title,
+  description: item.data.summary,
+  datePublished: item.data.date,
+  dateModified: item.data.updated ?? item.data.date,
+  keywords: item.data.tags.join(', '),
+  author: { '@type': 'Person', name: siteConfig.name },
+  mainEntityOfPage: new URL(`/en/notes/${entry.slug}`, Astro.site).toString()
+} : undefined;
+---
+{item && Content ? (
+  <BaseLayout title={item.data.title} description={item.data.summary} locale="en" alternatePath={`/notes/${entry.slug}`} structuredData={techArticleLd}>
+    <div class="article">
+      <article>
+        <div class="label">{dict.notes.label}</div>
+        <h1>{item.data.title}</h1>
+        <div class="meta">
+          <span>{item.data.subject}</span>
+          <span>{item.data.source}</span>
+          {item.data.version && <span>v{item.data.version}</span>}
+          {item.data.updated && <span>{dict.notes.updatedLabel} {item.data.updated}</span>}
+        </div>
+        <div class="tags">
+          {item.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+        <div class="prose">
+          <Content />
+        </div>
+        <VideoEmbed url={item.data.video} title={item.data.title} />
+      </article>
+      <Changelog changelog={item.data.changelog} labels={dict.changelog} />
+    </div>
+  </BaseLayout>
+) : (
+  <BaseLayout title={entry.tr.data.title} description={entry.tr.data.summary} locale="en" alternatePath={`/notes/${entry.slug}`}>
+    <div class="article">
+      <article>
+        <div class="label">{dict.notes.label}</div>
+        <h1>{entry.tr.data.title}</h1>
+        <p>{dict.untranslated.message}</p>
+        <p><a href={`/notes/${entry.slug}`}>{dict.untranslated.backLink}</a></p>
+      </article>
+    </div>
+  </BaseLayout>
+)}

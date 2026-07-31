@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+import { t } from '../i18n';
+const dict = t('tr');
+const aboutEntry = await getEntry('about', 'index');
+if (!aboutEntry) throw new Error('src/content/about/index.md bulunamadı');
+const { Content } = await aboutEntry.render();
+---
+<BaseLayout title={dict.about.metaTitle} description={dict.about.metaDescription} locale="tr" alternatePath="/en/about/">
+  <section class="hero">
+    <div>
+      <div class="label">{dict.about.profileLabel}</div>
+      <h1>{aboutEntry.data.title}</h1>
+      <div class="about-body">
+        <Content />
+      </div>
+    </div>
+    <div class="panel">
+      <h2>{dict.about.interestsTitle}</h2>
+      <p>{dict.about.interestsText}</p>
+      <blockquote>{dict.about.quote}</blockquote>
+    </div>
+  </section>
+</BaseLayout>

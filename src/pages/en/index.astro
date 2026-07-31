@@ -1,0 +1,103 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PdfLink from '../../components/PdfLink.astro';
+import { getCollection } from 'astro:content';
+import { getPublished } from '../../lib/content';
+import { siteConfig } from '../../config';
+import { t } from '../../i18n';
+
+const dict = t('en');
+
+const projects = await getPublished('projects', 'en');
+const featured = projects.filter((item) => item.data.featured).slice(0, 3);
+
+const aboutEntries = await getCollection('about');
+const aboutEntry = aboutEntries.find((entry) => entry.data.lang === 'en');
+if (!aboutEntry) throw new Error('src/content/about/index.en.md bulunamadı');
+const { Content } = await aboutEntry.render();
+
+const profileImages = import.meta.glob<{ default: ImageMetadata }>('../../assets/profile.{jpg,jpeg,png,webp}', { eager: true });
+const profileImage = Object.values(profileImages)[0]?.default;
+const cvExists = fs.existsSync(path.join(process.cwd(), 'public', siteConfig.cvPathEn));
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: siteConfig.name,
+  url: Astro.site?.toString(),
+  email: `mailto:${siteConfig.email}`,
+  sameAs: [siteConfig.linkedin],
+  jobTitle: dict.home.heroLabel,
+  description: siteConfig.taglineEn
+};
+---
+<BaseLayout title={siteConfig.name} description={dict.home.metaDescription} locale="en" alternatePath="/" structuredData={personLd}>
+  <section class="hero">
+    <div class="profile-intro">
+      {profileImage ? (
+        <Image class="profile-photo" src={profileImage} alt={siteConfig.name} width={96} height={96} format="webp" />
+      ) : (
+        <div class="profile-photo profile-placeholder" aria-hidden="true">MCÖ</div>
+      )}
+      <div>
+        <div class="label">{dict.home.heroLabel}</div>
+        <h1>{siteConfig.name}</h1>
+        <p class="tagline">{siteConfig.taglineEn}</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>{dict.home.focusTitle}</h2>
+      <p>{dict.home.focusText}</p>
+      <p class="label">{dict.home.approachLabel}</p>
+      <p>{dict.home.approachText}</p>
+    </div>
+  </section>
+
+  <section class="about-section">
+    <h2 class="section-title">{dict.home.aboutTitle}</h2>
+    <div class="panel about-body">
+      <Content />
+    </div>
+    <div class="cv-contact-row">
+      {cvExists ? (
+        <PdfLink href={siteConfig.cvPathEn} viewLabel={dict.home.cvView} downloadLabel={dict.pdf.downloadLabel} />
+      ) : (
+        <span class="cv-btn-disabled" title={dict.home.cvComingSoonTitle}>{dict.home.cvComingSoon}</span>
+      )}
+      <div class="contact-links">
+        <a class="contact-link" href={`mailto:${siteConfig.email}`} aria-label={dict.home.emailLabel}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>
+          {dict.home.emailLabel}
+        </a>
+        <a class="contact-link" href={siteConfig.linkedin} target="_blank" rel="noopener noreferrer" aria-label={dict.home.linkedinLabel}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c0-1.1.9-2 2-2s2 .9 2 2v5"/></svg>
+          {dict.home.linkedinLabel}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">{dict.home.featuredTitle}</h2>
+    <div class="grid">
+      {featured.map((item) => (
+        <article class="card">
+          <div class="label">{dict.home.projectLabel}</div>
+          <h3>{item.data.title}</h3>
+          <p>{item.data.summary}</p>
+          <div class="tags">
+            {item.data.tools.map((tool) => <span class="tag">{tool}</span>)}
+          </div>
+          <p><a href={`/en/projects/${item.slug.replace(/\.en$/, '')}`}>{dict.home.viewDetails}</a></p>
+        </article>
+      ))}
+    </div>
+    <p class="view-all-links">
+      <a href="/en/projects/">{dict.home.viewAllProjects}</a>
+      <a href="/en/research/">{dict.home.viewAllResearch}</a>
+    </p>
+  </section>
+</BaseLayout>

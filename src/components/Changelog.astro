@@ -1,0 +1,35 @@
+---
+interface Props {
+  changelog?: { version: string; date: string; note: string }[];
+  labels?: { title: string; version: string; date: string; note: string };
+}
+const {
+  changelog,
+  labels = { title: 'Değişiklik geçmişi', version: 'Sürüm', date: 'Tarih', note: 'Not' }
+} = Astro.props;
+---
+{changelog && changelog.length > 0 && (
+  <section class="changelog">
+    <h2 class="section-title">{labels.title}</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{labels.version}</th>
+            <th>{labels.date}</th>
+            <th>{labels.note}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {changelog.map((entry) => (
+            <tr>
+              <td>{entry.version}</td>
+              <td>{entry.date}</td>
+              <td>{entry.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+)}

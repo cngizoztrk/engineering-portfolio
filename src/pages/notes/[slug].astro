@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Changelog from '../../components/Changelog.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { render } from 'astro:content';
+import { getPublished } from '../../lib/content';
+import { t } from '../../i18n';
+import { siteConfig } from '../../config';
+
+const dict = t('tr');
+
+export async function getStaticPaths() {
+  const items = await getPublished('notes', 'tr');
+  return items.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+
+const techArticleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: item.data.title,
+  description: item.data.summary,
+  datePublished: item.data.date,
+  dateModified: item.data.updated ?? item.data.date,
+  keywords: item.data.tags.join(', '),
+  author: { '@type': 'Person', name: siteConfig.name },
+  mainEntityOfPage: new URL(`/notes/${item.slug}`, Astro.site).toString()
+};
+---
+<BaseLayout title={item.data.title} description={item.data.summary} locale="tr" alternatePath={`/en/notes/${item.slug}`} structuredData={techArticleLd}>
+  <div class="article">
+    <article>
+      <div class="label">{dict.notes.label}</div>
+      <h1>{item.data.title}</h1>
+      <div class="meta">
+        <span>{item.data.subject}</span>
+        <span>{item.data.source}</span>
+        {item.data.version && <span>v{item.data.version}</span>}
+        {item.data.updated && <span>{dict.notes.updatedLabel} {item.data.updated}</span>}
+      </div>
+      <div class="tags">
+        {item.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+      <div class="prose">
+        <Content />
+      </div>
+      <VideoEmbed url={item.data.video} title={item.data.title} />
+    </article>
+    <Changelog changelog={item.data.changelog} labels={dict.changelog} />
+  </div>
+</BaseLayout>

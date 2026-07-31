@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublished } from '../lib/content';
+import { t } from '../i18n';
+const dict = t('tr');
+const items = [
+  ...(await getPublished('research', 'tr')).map((item) => ({ ...item, section: dict.search.sectionResearch })),
+  ...(await getPublished('projects', 'tr')).map((item) => ({ ...item, section: dict.search.sectionProject })),
+  ...(await getPublished('notes', 'tr')).map((item) => ({ ...item, section: dict.search.sectionNote })),
+];
+const uiText = { placeholder: dict.search.placeholder, noResults: dict.search.noResults, viewLink: dict.search.viewLink };
+---
+<BaseLayout title={dict.search.metaTitle} description={dict.search.metaDescription} locale="tr" alternatePath="/en/search/">
+  <h1 class="section-title">{dict.search.title}</h1>
+  <input id="searchInput" class="search-box" type="search" placeholder={dict.search.placeholder} />
+  <div id="results" class="grid"></div>
+
+  <script type="module" is:inline define:vars={{ items, uiText }}>
+    const searchInput = document.querySelector('#searchInput');
+    const results = document.querySelector('#results');
+
+    function render(query) {
+      const normalized = query.trim().toLowerCase();
+      const filtered = items.filter((item) => {
+        const haystack = `${item.data.title} ${item.data.summary} ${item.data.tags.join(' ')} ${item.data.topic || ''} ${item.data.subject || ''}`.toLowerCase();
+        return haystack.includes(normalized);
+      });
+
+      results.innerHTML = filtered.length
+        ? filtered.map((item) => {
+            const date = item.data.date || item.data.updated || '';
+            return `
+            <article class="card">
+              <div class="label">${item.section}</div>
+              <h3>${item.data.title}</h3>
+              <div class="meta">${date ? `<span>${date}</span>` : ''}</div>
+              <p>${item.data.summary}</p>
+              <p><a href="/${item.collection}/${item.slug}">${uiText.viewLink}</a></p>
+            </article>
+          `;
+          }).join('')
+        : `<p class="card">${uiText.noResults}</p>`;
+    }
+
+    searchInput.addEventListener('input', (event) => render(event.target.value));
+    render('');
+  </script>
+</BaseLayout>

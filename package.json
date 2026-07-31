@@ -1,0 +1,28 @@
+{
+  "name": "engineering-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && npx pagefind --site dist",
+    "preview": "astro preview",
+    "lint": "astro check",
+    "new": "node scripts/new.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.13.1",
+    "katex": "^0.16.22",
+    "mermaid": "^11.16.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/node": "^26.1.1",
+    "pagefind": "^1.4.0"
+  }
+}
