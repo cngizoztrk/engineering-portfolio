@@ -2,7 +2,7 @@
 translationKey: kapi-analizi
 slug: deneme
 title: Kayıtlı Kuru Kapı Mekanizması Parametrik Analizi
-summary: Düşük hacimli mekanizma için dayanım ve deformasyon analizi örneği...
+summary: adım 5 deneme
 domain: Katı mekanik / mekanizma tasarımı
 category: Mekanizma tasarımı
 tools:
