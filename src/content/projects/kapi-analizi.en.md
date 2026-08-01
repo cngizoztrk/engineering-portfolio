@@ -1,30 +1,39 @@
 ---
+translationKey: kapi-analizi
 title: Parametric Analysis of a Landing Door Mechanism
-tools: [ANSYS, MATLAB, Python]
+summary: An example strength and deformation analysis for a compact mechanism.
 domain: Solid mechanics / mechanism design
 category: Mechanism design
-standards: [EN 81-20, ISO 13855]
-summary: An example strength and deformation analysis for a compact mechanism.
+tools:
+  - ANSYS
+  - MATLAB
+  - Python
+standards:
+  - EN 81-20
+  - ISO 13855
+tags:
+  - door
+  - mechanism
+  - strength
 github: https://github.com/example/project
-pdf: /pdf/sample-report.pdf
 images:
   - /images/gallery/placeholder-1.svg
   - /images/gallery/placeholder-2.svg
   - /images/gallery/placeholder-3.svg
 featured: true
-tags: [door, mechanism, strength]
-draft: false
-version: "1.1"
-updated: 2026-07-23
-lang: en
-translationKey: kapi-analizi
+pdf: /pdf/sample-report.pdf
+video: ''
 changelog:
-  - version: "1.0"
+  - version: '1.0'
     date: 2026-06-01
     note: Initial parametric model and preliminary calculation.
-  - version: "1.1"
+  - version: '1.1'
     date: 2026-07-23
     note: Added mesh convergence study and validation step.
+version: '1.1'
+updated: 2026-07-23
+draft: false
+lang: en
 ---
 
 ## 1. Engineering problem definition
