@@ -1,6 +1,6 @@
 ---
 translationKey: kapi-analizi
-slug: deneme
+slug: kapi-analizi
 title: Kayıtlı Kuru Kapı Mekanizması Parametrik Analizi
 summary: adım 5 deneme
 domain: Katı mekanik / mekanizma tasarımı
