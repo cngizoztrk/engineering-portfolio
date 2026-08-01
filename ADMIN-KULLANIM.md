@@ -31,7 +31,7 @@ Bu token yalnızca `engineering-portfolio` reposuna yazabilir, başka hiçbir he
 ## 2. Panele giriş
 
 1. Tarayıcıda şu adrese gidin: **https://mcengizozturk.pages.dev/admin**
-2. Karşınıza bir giriş ekranı gelecek. **"Sign In with Token"** (Token ile giriş yap) butonuna tıklayın.
+2. Karşınıza bir giriş ekranı gelecek. **"Sign In with GitHub"** butonuna DEĞİL, **"Sign In Using Access Token"** (Token ile giriş yap) butonuna tıklayın — "Sign In with GitHub" bu proje için çalışmaz (404 hatası verir), çünkü OAuth uygulaması kurulu değil.
 3. Açılan kutuya, 1. adımda kopyaladığınız `github_pat_...` token'ı yapıştırın ve onaylayın.
 4. Panel açılır; sol tarafta **Araştırmalar**, **Projeler**, **Notlar** ve **Hakkımda** koleksiyonlarını görürsünüz.
 
@@ -45,11 +45,21 @@ Token tarayıcınızda saklanır; aynı bilgisayar/tarayıcıda tekrar girişte 
 2. Sağ üstteki **New Project** (veya **+ Yeni**) butonuna tıklayın.
 3. Açılan formda alanları doldurun:
    - **Dosya adı (slug):** Küçük harf, rakam ve tire kullanın (örn. `koprulu-mekanizma-analizi`). **Kaydettikten sonra değiştirmeyin** — link bu isme bağlanır.
-   - **Başlık, Özet, Alan (domain), Kategori, Araçlar, Standartlar, Etiketler:** projenizin bilgileri.
-   - **GitHub bağlantısı, Teknik rapor (PDF), Galeri görselleri, Video:** hepsi opsiyonel, doldurmasanız da olur.
+   - **Başlık, Özet, Alan (domain):** bunlar zorunlu, boş bırakamazsınız (bkz. aşağıdaki "Hangi alanlar zorunlu?" bölümü).
+   - **Kategori, Araçlar, Standartlar, Etiketler, GitHub bağlantısı, Teknik rapor (PDF), Galeri görselleri, Video, Sürüm, Değişiklik geçmişi:** hepsi opsiyonel, doldurmasanız da Publish çalışır.
    - **Dil:** Bu formu **Türkçe** içerik olarak dolduruyorsanız `tr` seçili kalsın.
-   - **İçerik:** Ana metni (Markdown) buraya yazın.
+   - **İçerik:** Ana metni (Markdown) buraya yazın — bu alan zorunludur.
 4. Sağ üstte **Publish** (Yayınla) butonuna tıklayın.
+
+### Hangi alanlar zorunlu?
+
+Her koleksiyonda **Başlık, Özet, Tarih ve İçerik (body)** her zaman zorunludur. Buna ek olarak, koleksiyona özel bir zorunlu alan daha vardır — bu alanlar site kodunun (`src/content/config.ts`) gerçek gereksinimidir, boş bırakılırsa site derlemesi hata verir:
+
+- **Projeler:** yukarıdakilere ek olarak **Alan (domain)** de zorunludur.
+- **Araştırmalar:** yukarıdakilere ek olarak **Konu (topic)** de zorunludur.
+- **Notlar:** yukarıdakilere ek olarak **Konu başlığı (subject)** de zorunludur.
+
+**Bunların dışındaki tüm alanlar opsiyoneldir** — istediğinizi boş bırakabilirsiniz. Video, PDF, galeri, değişiklik geçmişi gibi alanları hiç kullanmıyorsanız dokunmadan boş geçebilirsiniz, Publish bunları engellemez.
 
 ### Aynı projenin İngilizce çevirisini eklemek
 
@@ -72,14 +82,16 @@ Formun üstünde bir dil sekmesi (TR / EN) göreceksiniz. **EN** sekmesine geçi
 
 ---
 
-## 6. Bir yazının başlığını değiştirme
+## 6. Bir yazıda küçük bir düzeltme yapma (kısmi düzenleme)
+
+Bir kaydı sadece **kısmen** düzenlemek serbesttir — örneğin başlıkta bir kelimeyi veya metindeki bir virgülü düzeltmek için diğer hiçbir alana dokunmanıza gerek yoktur:
 
 1. Sol menüden ilgili koleksiyona (Projeler / Araştırmalar / Notlar) girin.
 2. Listeden düzenlemek istediğiniz kaydı açın.
-3. **Başlık** alanını güncelleyin.
+3. Sadece değiştirmek istediğiniz alanı güncelleyin (örn. **Başlık** veya **İçerik** içindeki bir kelime). Diğer alanlara — dolu olsun boş olsun — dokunmayın.
 4. Sağ üstte **Publish**'e tıklayın (değişiklik doğrudan yayınlanır).
 
-> Not: **Dosya adı (slug)** alanını başlıkla birlikte değiştirmeyin — bu, o sayfanın linkini değiştirir ve eski linke giden herkes 404 hatası alır.
+> Not: **Dosya adı (slug)** alanını değiştirmeyin — bu, o sayfanın linkini değiştirir ve eski linke giden herkes 404 hatası alır.
 
 ---
 

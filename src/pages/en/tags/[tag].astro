@@ -23,7 +23,7 @@ const allItems = [
 ].map((item) => ({ ...item, slug: canonicalSlug(item) }));
 const items = allItems.filter((item) => item.data.tags.includes(tag as string));
 ---
-<BaseLayout title={`${dict.tags.titlePrefix} ${tag}`} description={`${dict.tags.metaDescriptionPrefix} ${tag}`} locale="en" alternatePath="/">
+<BaseLayout title={`${dict.tags.titlePrefix} ${tag}`} description={`${dict.tags.metaDescriptionPrefix} ${tag}`} locale="en" alternatePath="/tr/">
   <h1 class="section-title">{dict.tags.titlePrefix} {tag}</h1>
   <div class="grid">
     {items.map((item) => (

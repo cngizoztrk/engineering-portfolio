@@ -29,8 +29,12 @@ const fallbackAlternate = locale === 'tr'
 const altHref = alternatePath ?? fallbackAlternate;
 const trHref = locale === 'tr' ? currentPath : altHref;
 const enHref = locale === 'en' ? currentPath : altHref;
+// Ana sayfa köke (/) taşındığından (varsayılan dil İngilizce), x-default orada
+// İngilizce sürümü işaret etmeli; diğer tüm sayfa çiftlerinde TR öneksiz kaldığı
+// için x-default TR olmaya devam eder.
+const xDefaultHref = enHref === '/' ? enHref : trHref;
 
-const homeHref = locale === 'tr' ? '/' : '/en/';
+const homeHref = locale === 'tr' ? '/tr/' : '/';
 const navPrefix = locale === 'tr' ? '' : '/en';
 ---
 <!doctype html>
@@ -49,7 +53,7 @@ const navPrefix = locale === 'tr' ? '' : '/en';
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="tr" href={trHref} />
     <link rel="alternate" hreflang="en" href={enHref} />
-    <link rel="alternate" hreflang="x-default" href={trHref} />
+    <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
     <title>{title}</title>
     {structuredData && (
       <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />

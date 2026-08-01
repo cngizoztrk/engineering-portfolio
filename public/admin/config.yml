@@ -48,7 +48,7 @@ collections:
       - {label: "Özet", name: summary, widget: text, i18n: true}
       - {label: "Konu", name: topic, widget: string, i18n: true}
       - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
-      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true, hint: "Her satıra bir etiket."}
+      - {label: "Etiketler", name: tags, widget: list, required: false, min: 0, i18n: true, hint: "Her satıra bir etiket."}
       - {label: "Durum", name: status, widget: select, options: [ongoing, completed], default: ongoing, i18n: duplicate}
       - {label: "Kaynak sayısı", name: sourceCount, widget: number, value_type: int, default: 0, required: false, i18n: duplicate}
       - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, i18n: duplicate}
@@ -67,17 +67,17 @@ collections:
         required: false
         i18n: duplicate
         hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
-        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
       - label: "Değişiklik geçmişi"
         name: changelog
         widget: list
         required: false
+        min: 0
         i18n: true
         fields:
           - {label: "Sürüm", name: version, widget: string}
           - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
           - {label: "Not", name: note, widget: string}
-      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, required: false, i18n: duplicate}
       - label: "Dil"
         name: lang
         widget: select
@@ -110,22 +110,22 @@ collections:
       - {label: "Özet", name: summary, widget: text, i18n: true}
       - {label: "Alan (domain)", name: domain, widget: string, i18n: true, hint: "Örn. Katı mekanik / mekanizma tasarımı"}
       - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
-      - {label: "Araçlar", name: tools, widget: list, required: false, i18n: true, hint: "Örn. ANSYS, MATLAB, SolidWorks — her satıra bir araç."}
-      - {label: "Standartlar", name: standards, widget: list, required: false, i18n: true, hint: "Örn. EN 81-20, ISO 13855"}
-      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true}
+      - {label: "Araçlar", name: tools, widget: list, required: false, min: 0, i18n: true, hint: "Örn. ANSYS, MATLAB, SolidWorks — her satıra bir araç."}
+      - {label: "Standartlar", name: standards, widget: list, required: false, min: 0, i18n: true, hint: "Örn. EN 81-20, ISO 13855"}
+      - {label: "Etiketler", name: tags, widget: list, required: false, min: 0, i18n: true}
       - label: "GitHub bağlantısı"
         name: github
         widget: string
         required: false
         i18n: duplicate
-        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
       - label: "Galeri görselleri"
         name: images
         widget: list
         required: false
+        min: 0
         i18n: duplicate
         field: {label: "Görsel", name: image, widget: image}
-      - {label: "Öne çıkan proje", name: featured, widget: boolean, default: false, i18n: duplicate}
+      - {label: "Öne çıkan proje", name: featured, widget: boolean, default: false, required: false, i18n: duplicate}
       - label: "Teknik rapor (PDF)"
         name: pdf
         widget: file
@@ -139,11 +139,11 @@ collections:
         required: false
         i18n: duplicate
         hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
-        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
       - label: "Değişiklik geçmişi"
         name: changelog
         widget: list
         required: false
+        min: 0
         i18n: true
         fields:
           - {label: "Sürüm", name: version, widget: string}
@@ -151,7 +151,7 @@ collections:
           - {label: "Not", name: note, widget: string}
       - {label: "Sürüm", name: version, widget: string, required: false, i18n: duplicate}
       - {label: "Güncelleme tarihi", name: updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false, i18n: duplicate}
-      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, required: false, i18n: duplicate}
       - label: "Dil"
         name: lang
         widget: select
@@ -185,7 +185,7 @@ collections:
       - {label: "Konu başlığı", name: subject, widget: string, i18n: true, hint: "Örn. Makine elemanları"}
       - {label: "Kaynak", name: source, widget: string, required: false, i18n: true, hint: "Örn. Mühendislik ders notları"}
       - {label: "Kategori", name: category, widget: string, required: false, i18n: true}
-      - {label: "Etiketler", name: tags, widget: list, required: false, i18n: true}
+      - {label: "Etiketler", name: tags, widget: list, required: false, min: 0, i18n: true}
       - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, i18n: duplicate}
       - {label: "Güncelleme tarihi", name: updated, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false, i18n: duplicate}
       - {label: "Sürüm", name: version, widget: string, required: false, i18n: duplicate}
@@ -202,17 +202,17 @@ collections:
         required: false
         i18n: duplicate
         hint: "YouTube veya Vimeo video bağlantısı yapıştır, sayfada otomatik yerleştirilir."
-        pattern: ["^https?://.+", "Geçerli bir bağlantı gir."]
       - label: "Değişiklik geçmişi"
         name: changelog
         widget: list
         required: false
+        min: 0
         i18n: true
         fields:
           - {label: "Sürüm", name: version, widget: string}
           - {label: "Tarih", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false}
           - {label: "Not", name: note, widget: string}
-      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, i18n: duplicate}
+      - {label: "Taslak (yayınlanmaz)", name: draft, widget: boolean, default: false, required: false, i18n: duplicate}
       - label: "Dil"
         name: lang
         widget: select

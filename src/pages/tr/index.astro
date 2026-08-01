@@ -4,37 +4,36 @@ import path from 'node:path';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PdfLink from '../../components/PdfLink.astro';
-import { getCollection } from 'astro:content';
-import { getPublished, canonicalSlug } from '../../lib/content';
+import { getEntry } from 'astro:content';
+import { getPublished } from '../../lib/content';
 import { siteConfig } from '../../config';
 import { t } from '../../i18n';
 
-const dict = t('en');
+const dict = t('tr');
 
-const projects = await getPublished('projects', 'en');
+const projects = await getPublished('projects', 'tr');
 const featured = projects.filter((item) => item.data.featured).slice(0, 3);
 
-const aboutEntries = await getCollection('about');
-const aboutEntry = aboutEntries.find((entry) => entry.data.lang === 'en');
-if (!aboutEntry) throw new Error('src/content/about/index.en.md bulunamadı');
+const aboutEntry = await getEntry('about', 'index');
+if (!aboutEntry) throw new Error('src/content/about/index.md bulunamadı');
 const { Content } = await aboutEntry.render();
 
 const profileImages = import.meta.glob<{ default: ImageMetadata }>('../../assets/profile.{jpg,jpeg,png,webp}', { eager: true });
 const profileImage = Object.values(profileImages)[0]?.default;
-const cvExists = fs.existsSync(path.join(process.cwd(), 'public', siteConfig.cvPathEn));
+const cvExists = fs.existsSync(path.join(process.cwd(), 'public', siteConfig.cvPathTr));
 
 const personLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: siteConfig.name,
-  url: Astro.site?.toString(),
+  url: new URL('/tr/', Astro.site).toString(),
   email: `mailto:${siteConfig.email}`,
   sameAs: [siteConfig.linkedin],
   jobTitle: dict.home.heroLabel,
-  description: siteConfig.taglineEn
+  description: siteConfig.tagline
 };
 ---
-<BaseLayout title={siteConfig.name} description={dict.home.metaDescription} locale="en" alternatePath="/tr/" structuredData={personLd}>
+<BaseLayout title={siteConfig.name} description={dict.home.metaDescription} locale="tr" alternatePath="/" structuredData={personLd}>
   <section class="hero">
     <div class="profile-intro">
       {profileImage ? (
@@ -45,7 +44,7 @@ const personLd = {
       <div>
         <div class="label">{dict.home.heroLabel}</div>
         <h1>{siteConfig.name}</h1>
-        <p class="tagline">{siteConfig.taglineEn}</p>
+        <p class="tagline">{siteConfig.tagline}</p>
       </div>
     </div>
     <div class="panel">
@@ -63,7 +62,7 @@ const personLd = {
     </div>
     <div class="cv-contact-row">
       {cvExists ? (
-        <PdfLink href={siteConfig.cvPathEn} viewLabel={dict.home.cvView} downloadLabel={dict.pdf.downloadLabel} />
+        <PdfLink href={siteConfig.cvPathTr} viewLabel={dict.home.cvView} downloadLabel={dict.pdf.downloadLabel} />
       ) : (
         <span class="cv-btn-disabled" title={dict.home.cvComingSoonTitle}>{dict.home.cvComingSoon}</span>
       )}
@@ -91,13 +90,13 @@ const personLd = {
           <div class="tags">
             {item.data.tools.map((tool) => <span class="tag">{tool}</span>)}
           </div>
-          <p><a href={`/en/projects/${canonicalSlug(item)}`}>{dict.home.viewDetails}</a></p>
+          <p><a href={`/projects/${item.slug}`}>{dict.home.viewDetails}</a></p>
         </article>
       ))}
     </div>
     <p class="view-all-links">
-      <a href="/en/projects/">{dict.home.viewAllProjects}</a>
-      <a href="/en/research/">{dict.home.viewAllResearch}</a>
+      <a href="/projects/">{dict.home.viewAllProjects}</a>
+      <a href="/research/">{dict.home.viewAllResearch}</a>
     </p>
   </section>
 </BaseLayout>
