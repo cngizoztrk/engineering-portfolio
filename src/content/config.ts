@@ -6,6 +6,20 @@ const isoDate = z.union([z.string(), z.date()]).transform((value: string | Date)
   value instanceof Date ? value.toISOString().slice(0, 10) : value
 );
 
+// Sveltia CMS'te boş bırakılan alanlar "" veya null olarak yazılabiliyor; Zod'un
+// .optional()/.default() mekanizması sadece `undefined`'ı tanır. Bu yüzden her
+// opsiyonel alanda önce "" ve null değerlerini undefined'a indirgiyoruz, böylece
+// admin panelinden boş kaydedilen bir alan build'i kırmıyor.
+const emptyToUndefined = (v: unknown) => (v === '' || v === null ? undefined : v);
+
+const optionalString = () => z.preprocess(emptyToUndefined, z.string().optional());
+const optionalUrl = () => z.preprocess(emptyToUndefined, z.string().url().optional());
+const optionalDate = () => z.preprocess(emptyToUndefined, isoDate.optional());
+const stringArrayWithDefault = () =>
+  z.preprocess(emptyToUndefined, z.array(z.string()).optional().default([]));
+const booleanWithDefault = (fallback: boolean) =>
+  z.preprocess(emptyToUndefined, z.boolean().optional().default(fallback));
+
 const changelogEntry = z.object({
   version: z.string(),
   date: isoDate,
@@ -15,18 +29,18 @@ const changelogEntry = z.object({
 const commonSchema = {
   title: z.string(),
   summary: z.string(),
-  tags: z.array(z.string()).default([]),
-  draft: z.boolean().default(false),
-  category: z.string().optional(),
-  updated: isoDate.optional(),
-  version: z.string().optional(),
-  changelog: z.array(changelogEntry).optional(),
-  pdf: z.string().optional(),
+  tags: stringArrayWithDefault(),
+  draft: booleanWithDefault(false),
+  category: optionalString(),
+  updated: optionalDate(),
+  version: optionalString(),
+  changelog: z.preprocess(emptyToUndefined, z.array(changelogEntry).optional().default([])),
+  pdf: optionalString(),
   // Faz 7: YouTube/Vimeo video bağlantısı (harici embed, dosya yükleme değil)
-  video: z.string().url().optional(),
+  video: optionalUrl(),
   // Faz 4 (i18n): içerik dili ve TR/EN çevirisini eşleştirmek için ortak anahtar
   lang: z.enum(['tr', 'en']).default('tr'),
-  translationKey: z.string().optional()
+  translationKey: optionalString()
 };
 
 const researchCollection = defineCollection({
@@ -44,12 +58,12 @@ const projectsCollection = defineCollection({
   type: 'content',
   schema: z.object({
     ...commonSchema,
-    tools: z.array(z.string()).default([]),
+    tools: stringArrayWithDefault(),
     domain: z.string(),
-    standards: z.array(z.string()).default([]),
-    github: z.string().url().optional(),
-    images: z.array(z.string()).optional(),
-    featured: z.boolean().default(false)
+    standards: stringArrayWithDefault(),
+    github: optionalUrl(),
+    images: stringArrayWithDefault(),
+    featured: booleanWithDefault(false)
   })
 });
 
@@ -58,7 +72,7 @@ const notesCollection = defineCollection({
   schema: z.object({
     ...commonSchema,
     subject: z.string(),
-    source: z.string().optional(),
+    source: optionalString(),
     date: z.coerce.string()
   })
 });
@@ -68,7 +82,7 @@ const aboutCollection = defineCollection({
   schema: z.object({
     title: z.string().default('Hakkımda'),
     lang: z.enum(['tr', 'en']).default('tr'),
-    translationKey: z.string().optional()
+    translationKey: optionalString()
   })
 });
 
