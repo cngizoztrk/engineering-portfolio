@@ -1,30 +1,40 @@
 ---
+translationKey: kapi-analizi
+slug: deneme
 title: Kayıtlı Kuru Kapı Mekanizması Parametrik Analizi
-tools: [ANSYS, MATLAB, Python]
+summary: Düşük hacimli mekanizma için dayanım ve deformasyon analizi örneği...
 domain: Katı mekanik / mekanizma tasarımı
 category: Mekanizma tasarımı
-standards: [EN 81-20, ISO 13855]
-summary: Düşük hacimli mekanizma için dayanım ve deformasyon analizi örneği.
+tools:
+  - ANSYS
+  - MATLAB
+  - Python
+standards:
+  - EN 81-20
+  - ISO 13855
+tags:
+  - kapı
+  - mekanizma
+  - dayanım
 github: https://github.com/example/project
-pdf: /pdf/sample-report.pdf
 images:
   - /images/gallery/placeholder-1.svg
   - /images/gallery/placeholder-2.svg
   - /images/gallery/placeholder-3.svg
 featured: true
-tags: [kapı, mekanizma, dayanım]
-lang: tr
-translationKey: kapi-analizi
-draft: false
-version: "1.1"
-updated: 2026-07-23
+pdf: /pdf/sample-report.pdf
+video: ''
 changelog:
-  - version: "1.0"
+  - version: '1.0'
     date: 2026-06-01
     note: İlk parametrik model ve ön hesap.
-  - version: "1.1"
+  - version: '1.1'
     date: 2026-07-23
     note: Mesh yakınsama çalışması ve doğrulama adımı eklendi.
+version: '1.1'
+updated: 2026-07-23
+draft: false
+lang: tr
 ---
 
 ## 1. Mühendislik problemi tanımı
